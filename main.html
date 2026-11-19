@@ -1,0 +1,1303 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ôn Thi Trắc Nghiệm - Vật Lý Đại Cương 1 (Chương 5)</title>
+    <style>
+        :root {
+            --primary-color: #2563eb;
+            --primary-hover: #1d4ed8;
+            --bg-color: #f8fafc;
+            --card-bg: #ffffff;
+            --text-color: #1e293b;
+            --border-color: #e2e8f0;
+            --success-color: #16a34a;
+            --error-color: #dc2626;
+        }
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            margin: 0;
+            padding: 20px;
+            display: flex;
+            justify-content: center;
+        }
+        .container {
+            width: 100%;
+            max-width: 800px;
+            background: var(--card-bg);
+            padding: 30px;
+            border-radius: 12px;
+            box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1);
+        }
+        h1 {
+            text-align: center;
+            color: var(--primary-color);
+            font-size: 24px;
+            margin-bottom: 5px;
+        }
+        .subtitle {
+            text-align: center;
+            color: #64748b;
+            margin-bottom: 25px;
+            font-size: 14px;
+        }
+        .quiz-controls {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            padding-bottom: 10px;
+            border-bottom: 1px solid var(--border-color);
+            font-weight: 600;
+        }
+        .question-box {
+            font-size: 18px;
+            font-weight: 600;
+            margin-bottom: 20px;
+            line-height: 1.5;
+        }
+        .options-list {
+            list-style: none;
+            padding: 0;
+            margin: 0 0 25px 0;
+        }
+        .option-item {
+            background: #f1f5f9;
+            border: 2px solid var(--border-color);
+            border-radius: 8px;
+            padding: 12px 16px;
+            margin-bottom: 10px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            font-size: 16px;
+        }
+        .option-item:hover:not(.disabled) {
+            background: #e2e8f0;
+            border-color: var(--primary-color);
+        }
+        .option-item.selected {
+            border-color: var(--primary-color);
+            background: #eff6ff;
+        }
+        .option-item.correct {
+            background: #dcfce7 !important;
+            border-color: var(--success-color) !important;
+            color: #166534;
+        }
+        .option-item.incorrect {
+            background: #fee2e2 !important;
+            border-color: var(--error-color) !important;
+            color: #991b1b;
+        }
+        .option-item.disabled {
+            cursor: default;
+        }
+        .explanation {
+            background: #eff6ff;
+            border-left: 4px solid var(--primary-color);
+            padding: 15px;
+            margin-bottom: 20px;
+            border-radius: 0 8px 8px 0;
+            display: none;
+            font-size: 15px;
+            line-height: 1.5;
+            color: #1e3a8a;
+        }
+        .btn-container {
+            display: flex;
+            justify-content: space-between;
+            gap: 10px;
+        }
+        button {
+            background-color: var(--primary-color);
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 6px;
+            font-size: 16px;
+            cursor: pointer;
+            transition: background-color 0.2s;
+        }
+        button:hover {
+            background-color: var(--primary-hover);
+        }
+        button:disabled {
+            background-color: #cbd5e1;
+            cursor: not-allowed;
+        }
+        .jump-box {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 14px;
+        }
+        .jump-box input {
+            width: 60px;
+            padding: 6px;
+            border: 1px solid var(--border-color);
+            border-radius: 4px;
+            text-align: center;
+        }
+        .score-card {
+            text-align: center;
+            display: none;
+        }
+        .score-card h2 {
+            color: var(--primary-color);
+            font-size: 28px;
+        }
+        .img-wrapper {
+            display: block;
+            margin-top: 12px;
+            text-align: center;
+        }
+        .img-wrapper img {
+            max-width: 100%;
+            height: auto;
+            border-radius: 6px;
+            border: 1px solid var(--border-color);
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <h1>VẬT LÝ ĐẠI CƯƠNG 1 - CƠ NHIỆT</h1>
+    <div class="subtitle">Chương 5: Phương Trình Trạng Thái Khí Lý Tưởng (90 Câu - Đầy đủ đáp án & Lời giải)</div>
+
+    <div id="quiz-screen">
+        <div class="quiz-controls">
+            <span id="question-counter">Câu 1 / 90</span>
+            <div class="jump-box">
+                <span>Đến câu:</span>
+                <input type="number" id="jump-input" min="1" max="90" placeholder="1-90">
+                <button style="padding: 6px 12px; font-size: 14px;" onclick="jumpToQuestion()">Đi</button>
+            </div>
+            <span id="score-tracker">Điểm: 0</span>
+        </div>
+
+        <div class="question-box" id="question-text">Đang tải câu hỏi...</div>
+        
+        <ul class="options-list" id="options-container"></ul>
+
+        <div class="explanation" id="explanation-box">
+            <strong>💡 Giải thích chi tiết:</strong> <span id="explanation-text"></span>
+        </div>
+
+        <div class="btn-container">
+            <button id="prev-btn" onclick="prevQuestion()" disabled>Câu trước</button>
+            <button id="next-btn" onclick="nextQuestion()" disabled>Câu tiếp theo</button>
+        </div>
+    </div>
+
+    <div class="score-card" id="score-card">
+        <h2>Hoàn thành bài ôn tập Chương 5!</h2>
+        <p id="final-score" style="font-size: 20px; margin: 20px 0;"></p>
+        <button onclick="restartQuiz()">Làm lại từ đầu</button>
+    </div>
+</div>
+
+<script>
+    const quizData = [
+        {
+            q: "Câu 1. Hai bình chứa cùng một loại khí lý tưởng ở cùng nhiệt độ nhưng áp suất khác nhau. Động năng tịnh tiến trung bình của một phân tử khí trong hai bình",
+            options: [
+                "A. lớn hơn ở bình có áp suất cao.",
+                "B. lớn hơn ở bình có áp suất thấp.",
+                "C. bằng nhau.",
+                "D. phụ thuộc vào thể tích bình."
+            ],
+            correct: 2,
+            explain: "Động năng tịnh tiến trung bình của phân tử khí lý tưởng Wđ = (3/2)kT chỉ phụ thuộc vào nhiệt độ tuyệt đối T, không phụ thuộc áp suất hay thể tích."
+        },
+        {
+            q: "Câu 2. Khi nhiệt độ tuyệt đối của một lượng khí lý tưởng tăng, động năng tịnh tiến trung bình của các phân tử",
+            options: [
+                "A. tăng.",
+                "B. giảm.",
+                "C. không đổi.",
+                "D. chỉ tăng nếu thể tích không đổi."
+            ],
+            correct: 0,
+            explain: "Vì Wđ = (3/2)kT nên khi nhiệt độ tuyệt đối T tăng thì động năng tịnh tiến trung bình của phân tử tăng tỉ lệ thuận."
+        },
+        {
+            q: "Câu 3. Áp suất của khí lên thành bình có nguồn gốc vi mô chủ yếu từ",
+            options: [
+                "A. trọng lượng của các phân tử khí.",
+                "B. sự va chạm của các phân tử khí với thành bình.",
+                "C. lực hút giữa các phân tử khí.",
+                "D. kích thước của bình chứa."
+            ],
+            correct: 1,
+            explain: "Theo thuyết động học phân tử, áp suất khí tác dụng lên thành bình là kết quả của vô số va chạm đàn hồi của các phân tử khí lên mỗi đơn vị diện tích thành bình."
+        },
+        {
+            q: "Câu 4. Khí thực có xu hướng gần với khí lý tưởng nhất khi",
+            options: [
+                "A. áp suất cao và nhiệt độ thấp.",
+                "B. áp suất thấp và nhiệt độ cao.",
+                "C. áp suất và nhiệt độ đều thấp.",
+                "D. áp suất và nhiệt độ đều cao."
+            ],
+            correct: 1,
+            explain: "Ở áp suất thấp và nhiệt độ cao, khoảng cách trung bình giữa các phân tử rất lớn nên thể tích riêng của phân tử và lực tương tác giữa chúng trở nên không đáng kể."
+        },
+        {
+            q: "Câu 5. Trong mô hình khí lý tưởng, người ta xem",
+            options: [
+                "A. các phân tử có kích thước đáng kể và hút nhau mạnh.",
+                "B. Thể tích riêng của các phân tử có thể bỏ qua; ngoài thời gian va chạm, tương tác giữa chúng được xem như không đáng kể; các va chạm giữa các phân tử và với thành bình là hoàn toàn đàn hồi.",
+                "C. các phân tử đứng yên ở trạng thái cân bằng.",
+                "D. mọi phân tử có cùng vận tốc."
+            ],
+            correct: 1,
+            explain: "Đây là các giả thiết cơ bản định nghĩa mô hình khí lý tưởng trong cơ học thống kê và nhiệt động lực học."
+        },
+        {
+            q: "Câu 6. Đối với một lượng khí lý tưởng cố định, phát biểu nào sau đây đúng?",
+            options: [
+                "A. Khi nhiệt độ tăng thì áp suất luôn tăng, không phụ thuộc thể tích.",
+                "B. Khi giữ nhiệt độ T không đổi, tích pV không đổi.",
+                "C. Khi giữ áp suất p không đổi, thể tích không phụ thuộc nhiệt độ.",
+                "D. Áp suất của khí chỉ phụ thuộc vào số mol khí."
+            ],
+            correct: 1,
+            explain: "Theo định luật Boyle-Mariotte (quá trình đẳng nhiệt T = const), tích p·V = nRT = hằng số."
+        },
+        {
+            q: "Câu 7. Phương trình Van der Waals đối với 1 mol khí thực có dạng (p + a/V²)(V - b) = RT. Ý nghĩa vật lý của hai hiệu chỉnh a và b là",
+            options: [
+                "A. a biểu diễn thể tích riêng của phân tử, b biểu diễn lực tương tác giữa các phân tử.",
+                "B. a biểu diễn ảnh hưởng của lực hút giữa các phân tử, b biểu diễn thể tích riêng hữu hạn của các phân tử.",
+                "C. Cả a và b đều biểu diễn lực hút giữa các phân tử.",
+                "D. a và b đều biểu diễn thể tích của bình chứa."
+            ],
+            correct: 1,
+            explain: "Số hạng a/V² là áp suất nội tại gây ra bởi lực hút tương tác giữa các phân tử; hằng số b là cộng tích (thể tích riêng hiệu dụng) của 1 mol phân tử."
+        },
+        {
+            q: "Câu 8. Một bình kín có thể tích không đổi chứa khí lý tưởng. Nếu một nửa số phân tử khí thoát ra ngoài, đồng thời nhiệt độ của lượng khí còn lại không đổi, thì áp suất trong bình",
+            options: [
+                "A. Tăng 2 lần.",
+                "B. Giảm 2 lần.",
+                "C. Không thay đổi.",
+                "D. Giảm 4 lần."
+            ],
+            correct: 1,
+            explain: "Theo công thức p = n₀·k·T, khi V và T không đổi mà số phân tử giảm một nửa thì mật độ phân tử n₀ giảm một nửa, dẫn đến áp suất p giảm 2 lần."
+        },
+        {
+            q: "Câu 9. Chất khí gây áp suất lên thành bình chứa là do",
+            options: [
+                "A. Lực đẩy giữa các phân tử khí.",
+                "B. Thể tích bình chứa quá nhỏ so với lượng khí.",
+                "C. Các phân tử khí va chạm vào thành bình.",
+                "D. Trọng lực của khối khí tác dụng lên đáy bình."
+            ],
+            correct: 2,
+            explain: "Các phân tử chuyển động nhiệt hỗn loạn và va chạm liên tục vào thành bình tạo nên áp suất khí."
+        },
+        {
+            q: "Câu 10. Khi nói về khí lí tưởng, phát biểu nào sau đây là không đúng?",
+            options: [
+                "A. Là khí mà thể tích các phân tử khí có thể bỏ qua.",
+                "B. Là khí mà khối lượng các phân tử khí có thể bỏ qua.",
+                "C. Là khí mà các phân tử chỉ tương tác với nhau khi va chạm.",
+                "D. Khi va chạm với thành bình tạo nên áp suất."
+            ],
+            correct: 1,
+            explain: "Phân tử khí lý tưởng được coi là chất điểm (bỏ qua kích thước/thể tích riêng) nhưng vẫn có khối lượng xác định để có động lượng và động năng."
+        },
+        {
+            q: "Câu 11. Đối với một lượng khí lý tưởng xác định, khi nhiệt độ tăng và thể tích được giữ không đổi, áp suất của khí thay đổi như thế nào?",
+            options: [
+                "A. Áp suất giảm.",
+                "B. Áp suất không đổi.",
+                "C. Áp suất tăng.",
+                "D. Áp suất tăng rồi giảm."
+            ],
+            correct: 2,
+            explain: "Trong quá trình đẳng tích (V = const), áp suất tỉ lệ thuận với nhiệt độ tuyệt đối (p/T = const) nên nhiệt độ tăng thì áp suất tăng."
+        },
+        {
+            q: "Câu 12. Hai bình chứa cùng một loại khí lý tưởng, có cùng thể tích và cùng số mol. Bình A ở 27°C, bình B ở 127°C. So sánh áp suất của hai bình.",
+            options: [
+                "A. P_A = P_B vì cùng loại khí.",
+                "B. P_B > P_A vì nhiệt độ tuyệt đối của khí B lớn hơn.",
+                "C. P_A > P_B vì nhiệt độ Celsius của A nhỏ hơn.",
+                "D. Không thể so sánh áp suất nếu chưa biết khối lượng khí."
+            ],
+            correct: 1,
+            explain: "Từ p = nRT/V, với cùng n và V, bình B có T_B = 400 K > T_A = 300 K nên áp suất P_B > P_A."
+        },
+        {
+            q: "Câu 13. Một quả bóng bay được mang từ trong phòng ra ngoài trời lạnh. Giả sử lượng khí trong bóng không đổi và bóng có thể co giãn. Hiện tượng nào có khả năng xảy ra?",
+            options: [
+                "A. Bóng phồng to hơn vì áp suất khí bên trong giảm.",
+                "B. Bóng co lại vì nhiệt độ khí giảm làm thể tích giảm nếu áp suất gần như không đổi.",
+                "C. Bóng không thay đổi vì số mol khí không đổi.",
+                "D. Bóng nổ vì nhiệt độ giảm."
+            ],
+            correct: 1,
+            explain: "Quá trình gần đúng là đẳng áp (bằng áp suất khí quyển). Khi nhiệt độ giảm, theo định luật Gay-Lussac (V/T = const), thể tích khí giảm làm bóng co lại."
+        },
+        {
+            q: "Câu 14. Một lượng khí lý tưởng được chứa trong một xilanh có pittông. Khi nén khí nhanh, thể tích khí giảm đáng kể. Nếu quá trình nén diễn ra nhanh đến mức khí chưa kịp trao đổi nhiệt đáng kể với môi trường, nhiệt độ của khí có xu hướng",
+            options: [
+                "A. Giảm vì thể tích giảm.",
+                "B. Không đổi vì số mol khí không đổi.",
+                "C. Tăng vì công của ngoại lực làm tăng nội năng của khí.",
+                "D. Bằng 0 K vì khí bị nén."
+            ],
+            correct: 2,
+            explain: "Đây là quá trình nén đoạn nhiệt (Q ≈ 0). Ngoại lực nén khí thực hiện công dương (A > 0), theo nguyên lý I (ΔU = A) nội năng tăng làm nhiệt độ khí tăng lên."
+        },
+        {
+            q: "Câu 15. Theo mô hình khí lý tưởng, áp suất của khí trong bình chủ yếu có nguồn gốc từ",
+            options: [
+                "A. Trọng lượng của các phân tử khí.",
+                "B. Lực hút tĩnh điện giữa các phân tử khí.",
+                "C. Sự va chạm của các phân tử khí với thành bình.",
+                "D. Thể tích riêng của các phân tử khí."
+            ],
+            correct: 2,
+            explain: "Sự va chạm liên tục của các phân tử khí lên thành bình gây ra áp suất chất khí."
+        },
+        {
+            q: "Câu 16. Nung nóng một bình kim loại kín, cứng chứa khí lý tưởng, đại lượng nào của khí sau đây tăng?",
+            options: [
+                "A. Khối lượng khí.",
+                "B. Số phân tử khí.",
+                "C. Áp suất khí.",
+                "D. Khối lượng mỗi phân tử khí."
+            ],
+            correct: 2,
+            explain: "Bình kín cứng nên V và số mol n không đổi. Nung nóng làm T tăng nên áp suất p tăng."
+        },
+        {
+            q: "Câu 17. Một quả bóng bay mềm chứa khí, được buộc kín rồi đưa từ phòng ấm vào tủ lạnh. Coi áp suất bên ngoài gần như không đổi và vỏ bóng đủ mềm. Sau khi cân bằng nhiệt, bóng có xu hướng",
+            options: [
+                "A. Phồng to hơn.",
+                "B. Nhỏ lại.",
+                "C. Giữ nguyên thể tích.",
+                "D. Mất hết áp suất bên trong."
+            ],
+            correct: 1,
+            explain: "Áp suất không đổi, nhiệt độ giảm làm thể tích khối khí trong bóng giảm nên bóng nhỏ lại."
+        },
+        {
+            q: "Câu 18. Hai bình chứa lần lượt khí helium và khí argon, cùng ở nhiệt độ. So sánh động năng tịnh tiến trung bình của một nguyên tử trong hai bình.",
+            options: [
+                "A. Helium lớn hơn.",
+                "B. Argon lớn hơn.",
+                "C. Bằng nhau.",
+                "D. Không thể so sánh nếu chưa biết áp suất."
+            ],
+            correct: 2,
+            explain: "Động năng tịnh tiến trung bình Wđ = (3/2)kT chỉ phụ thuộc vào nhiệt độ tuyệt đối T, không phụ thuộc khối lượng nguyên tử."
+        },
+        {
+            q: "Câu 19. Một bình cứng, kín chứa khí lý tưởng. Nếu nhiệt độ của khí tăng từ 20°C lên 40°C, thì áp suất",
+            options: [
+                "A. Tăng 2 lần.",
+                "B. Tăng 1,07 lần.",
+                "C. Không đổi.",
+                "D. Giảm 2 lần."
+            ],
+            correct: 1,
+            explain: "Quá trình đẳng tích: p₂ / p₁ = T₂ / T₁ = (40 + 273) / (20 + 273) = 313 / 293 ≈ 1,068 (tức tăng 1,07 lần)."
+        },
+        {
+            q: "Câu 20. Trong mô hình động học phân tử, áp suất khí tác dụng lên thành bình chủ yếu do",
+            options: [
+                "A. Trọng lượng của các phân tử đè lên đáy bình.",
+                "B. Sự va chạm của các phân tử khí với thành bình.",
+                "C. Lực hút giữa các phân tử khí.",
+                "D. Lực hút hoặc đẩy giữa các phân tử khí với phân tử trên thành bình."
+            ],
+            correct: 1,
+            explain: "Áp suất vi mô của chất khí sinh ra do xung lượng truyền cho thành bình khi các phân tử va chạm đàn hồi vào thành bình."
+        },
+        {
+            q: "Câu 21. Nhiệt độ của một lượng khí lý tưởng tăng từ 10°C lên 20°C. Động năng tịnh tiến trung bình của phân tử khí",
+            options: [
+                "A. tăng gấp đôi vì nhiệt độ tăng gấp đôi.",
+                "B. không đổi vì nhiệt độ tăng quá ít.",
+                "C. giảm vì các phân tử va chạm nhiều hơn.",
+                "D. chỉ tăng khoảng 3,5% vì nó tỉ lệ với nhiệt độ tuyệt đối (283 K → 293 K)."
+            ],
+            correct: 3,
+            explain: "Tỉ lệ tăng: (293 - 283) / 283 = 10 / 283 ≈ 0,0353 (khoảng 3,5%)."
+        },
+        {
+            q: "Câu 22. Nung nóng một lượng khí lý tưởng chứa trong bình kín có thể tích không đổi. Áp suất khí tăng chủ yếu vì",
+            options: [
+                "A. các phân tử chuyển động nhanh hơn nên va chạm vào thành bình mạnh hơn và thường xuyên hơn.",
+                "B. số phân tử khí trong bình tăng lên.",
+                "C. kích thước của mỗi phân tử khí tăng lên.",
+                "D. lực hút giữa các phân tử khí tăng lên."
+            ],
+            correct: 0,
+            explain: "Nhiệt độ tăng làm vận tốc trung bình phân tử tăng, dẫn tới tần suất va chạm và xung lượng mỗi lần va chạm vào thành bình đều tăng."
+        },
+        {
+            q: "Câu 23. Một quả bóng bay bằng cao su mỏng đã được bơm căng được đặt gần nguồn nhiệt và nóng lên từ từ. Xem áp suất khí trong bóng gần như bằng áp suất khí quyển. Khi đó khí trong bóng",
+            options: [
+                "A. có áp suất tăng mạnh, thể tích không đổi.",
+                "B. có áp suất và thể tích đều giảm.",
+                "C. có áp suất gần như không đổi, thể tích tăng.",
+                "D. có thể tích giảm vì phân tử chuyển động nhanh hơn."
+            ],
+            correct: 2,
+            explain: "Vỏ cao su mỏng giãn nở tự do giữ áp suất bên trong cân bằng với khí quyển (đẳng áp), nhiệt độ tăng làm thể tích bóng tăng."
+        },
+        {
+            q: "Câu 24. Vật A cân bằng nhiệt với vật C; vật B cũng cân bằng nhiệt với vật C. Khi cho A và B tiếp xúc nhiệt với nhau thì",
+            options: [
+                "A. không có sự truyền nhiệt thuần giữa A và B vì chúng có cùng nhiệt độ.",
+                "B. nhiệt truyền từ vật có khối lượng lớn sang vật có khối lượng nhỏ.",
+                "C. nhiệt truyền từ vật có nội năng lớn sang vật có nội năng nhỏ.",
+                "D. chưa thể kết luận nếu không biết chất cấu tạo nên A và B."
+            ],
+            correct: 0,
+            explain: "Theo nguyên lý thứ không nhiệt động lực học, A và B cùng cân bằng nhiệt với C thì chúng có cùng nhiệt độ nên cân bằng nhiệt với nhau."
+        },
+        {
+            q: "Câu 25. Đối với một lượng khí lý tưởng xác định, nội năng",
+            options: [
+                "A. phụ thuộc vào thể tích vì thế năng tương tác giữa các phân tử thay đổi khi khoảng cách thay đổi.",
+                "B. bằng động năng của cả khối khí khi bình chứa chuyển động.",
+                "C. chỉ phụ thuộc nhiệt độ, vì thế năng tương tác giữa các phân tử được bỏ qua.",
+                "D. chỉ phụ thuộc áp suất."
+            ],
+            correct: 2,
+            explain: "Khí lý tưởng bỏ qua tương tác phân tử nên thế năng tương tác bằng 0; nội năng U = (i/2)nRT chỉ phụ thuộc vào nhiệt độ tuyệt đối T."
+        },
+        {
+            q: "Câu 26. Sau khi bơm xe đạp nhiều lần liên tiếp, thân bơm thường nóng lên. Nguyên nhân chính là",
+            options: [
+                "A. Không khí bị nén nên nhiệt độ giảm về 0°C.",
+                "B. Không khí bị nén và nhiệt độ của khí tăng.",
+                "C. Áp suất trong bơm giảm khi nén.",
+                "D. Khối lượng không khí trong bơm mất đi."
+            ],
+            correct: 1,
+            explain: "Công cơ học khi nén không khí liên tục (kèm ma sát pit-tông) làm tăng nội năng và nhiệt độ của khối khí bên trong ống bơm."
+        },
+        {
+            q: "Câu 27. Một quả bóng được để ngoài trời nắng lâu có thể căng hơn. Nếu thể tích bóng thay đổi ít, nguyên nhân là",
+            options: [
+                "A. Số phân tử khí biến mất.",
+                "B. Nhiệt độ khí tăng làm áp suất tăng.",
+                "C. Khối lượng quả bóng giảm.",
+                "D. Nhiệt độ khí giảm làm áp suất tăng."
+            ],
+            correct: 1,
+            explain: "Thể tích thay đổi ít (gần đẳng tích), khi phơi nắng nhiệt độ tăng làm áp suất khí bên trong tăng khiến bóng căng cứng hơn."
+        },
+        {
+            q: "Câu 28. Khi mở nắp chai nước ngọt có ga, nhiều bọt khí xuất hiện. Nguyên nhân trực tiếp là",
+            options: [
+                "A. Áp suất phía trên chất lỏng giảm.",
+                "B. Chất lỏng biến thành chất rắn.",
+                "C. Nhiệt độ nước luôn tăng mạnh.",
+                "D. Khối lượng nước tăng đột ngột."
+            ],
+            correct: 0,
+            explain: "Mở nắp làm áp suất khí phía trên bề mặt giảm đột ngột về áp suất khí quyển, làm giảm độ tan của khí CO₂ nên khí thoát ra tạo bọt."
+        },
+        {
+            q: "Câu 29. Một lượng khí được giữ trong bình kín có thể tích không đổi. Khi nhiệt độ của khí tăng thì áp suất của khí",
+            options: [
+                "A. Giảm.",
+                "B. Bằng 0.",
+                "C. Không đổi.",
+                "D. Tăng."
+            ],
+            correct: 3,
+            explain: "Quá trình đẳng tích (V = const): áp suất tỉ lệ thuận với nhiệt độ tuyệt đối nên khi T tăng thì p tăng."
+        },
+        {
+            q: "Câu 30. Khi mang một quả bóng bay từ nơi có áp suất khí quyển cao lên vùng núi cao, nếu nhiệt độ gần như không đổi thì quả bóng có xu hướng",
+            options: [
+                "A. Phồng ra.",
+                "B. Xẹp hoàn toàn ngay lập tức.",
+                "C. Co lại.",
+                "D. Không thể thay đổi kích thước."
+            ],
+            correct: 0,
+            explain: "Lên vùng núi cao áp suất khí quyển bên ngoài giảm. Trong điều kiện nhiệt độ gần không đổi (đẳng nhiệt), khí trong bóng giãn nở làm tăng thể tích (bóng phồng to ra)."
+        },
+        {
+            q: "Câu 31. Một lượng khí lý tưởng xác định chuyển từ trạng thái 1 sang trạng thái 2. Thể tích tăng, nhưng áp suất cuối bằng áp suất đầu. Trong quá trình đó, nhiệt độ của khí",
+            options: [
+                "A. chắc chắn giảm.",
+                "B. không thay đổi.",
+                "C. ở trạng thái cuối lớn hơn trạng thái đầu.",
+                "D. không thể so sánh vì không biết quá trình trung gian."
+            ],
+            correct: 2,
+            explain: "Từ phương trình trạng thái p₁V₁/T₁ = p₂V₂/T₂. Với p₁ = p₂ và V₂ > V₁ thì chắc chắn T₂ > T₁."
+        },
+        {
+            q: "Câu 32. Một bình kín, cứng chứa khí lý tưởng ở trạng thái cân bằng. Sau đó một nửa số phân tử khí thoát ra ngoài. Khi trạng thái cân bằng mới được thiết lập, nhiệt độ tuyệt đối của phần khí còn lại bằng hai lần nhiệt độ ban đầu. Áp suất cuối của khí trong bình",
+            options: [
+                "A. bằng một nửa áp suất ban đầu.",
+                "B. bằng áp suất ban đầu.",
+                "C. gấp đôi áp suất ban đầu.",
+                "D. gấp bốn lần áp suất ban đầu."
+            ],
+            correct: 1,
+            explain: "Ta có p = nRT/V. Khi số mol n giảm 2 lần (n' = n/2) và nhiệt độ tăng 2 lần (T' = 2T) với V không đổi thì p' = (n/2)·R·(2T)/V = nRT/V = p."
+        },
+        {
+            q: "Câu 33. Một lượng khí lý tưởng xác định chuyển từ trạng thái 1 sang trạng thái 2. Biết P₂ > P₁ và T₂ < T₁. So với trạng thái 1, thể tích ở trạng thái 2",
+            options: [
+                "A. lớn hơn.",
+                "B. nhỏ hơn.",
+                "C. bằng nhau.",
+                "D. có thể lớn hơn hoặc nhỏ hơn tùy độ biến thiên của áp suất."
+            ],
+            correct: 1,
+            explain: "Ta có V₂ / V₁ = (P₁ / P₂) · (T₂ / T₁). Vì P₁ / P₂ < 1 và T₂ / T₁ < 1 nên tích của chúng chắc chắn nhỏ hơn 1, tức V₂ < V₁."
+        },
+        {
+            q: "Câu 34. Một lượng khí lý tưởng xác định trải qua một quá trình trong đó tỉ số p/T tăng dần. Phát biểu nào sau đây đúng?",
+            options: [
+                "A. Thể tích của khí tăng dần.",
+                "B. Thể tích của khí giảm dần.",
+                "C. Thể tích của khí không đổi.",
+                "D. Không thể kết luận về sự thay đổi thể tích."
+            ],
+            correct: 1,
+            explain: "Từ phương trình trạng thái pV = nRT ⇒ p/T = nR/V. Khi n không đổi, tỉ số p/T tăng dần chứng tỏ thể tích V đang giảm dần."
+        },
+        {
+            q: "Câu 35. Một lượng khí lý tưởng xác định chuyển từ trạng thái 1 sang trạng thái 2 sao cho tích PV tăng. Phát biểu nào sau đây đúng?",
+            options: [
+                "A. Áp suất tăng.",
+                "B. Thể tích tăng.",
+                "C. Nhiệt độ tuyệt đối tăng.",
+                "D. Cả áp suất và thể tích đều tăng."
+            ],
+            correct: 2,
+            explain: "Theo phương trình Clapeyron-Mendeleev: PV = nRT. Với lượng khí xác định (n = const), tích PV tăng thì nhiệt độ tuyệt đối T chắc chắn tăng."
+        },
+        {
+            q: "Câu 36. Hai bình chứa cùng một loại khí lý tưởng ở cùng một nhiệt độ. Bình A có thể tích V, áp suất P. Bình B có thể tích 2V, áp suất 2P. Mật độ phân tử khí (số phân tử trên một đơn vị thể tích) ở bình B gấp mấy lần ở bình A?",
+            options: [
+                "A. 1 lần (bằng nhau).",
+                "B. 2 lần.",
+                "C. 4 lần.",
+                "D. 0,5 lần."
+            ],
+            correct: 1,
+            explain: "Áp suất khí liên hệ với mật độ phân tử n₀ qua công thức p = n₀·k·T. Cùng nhiệt độ T, áp suất bình B gấp 2 lần bình A (2P so với P) nên mật độ phân tử ở bình B gấp 2 lần bình A."
+        },
+        {
+            q: "Câu 37. Khi làm nóng một khối khí lý tưởng trong một bình kín có thể tích không đổi (đẳng tích), đại lượng nào sau đây của khối khí không thay đổi?",
+            options: [
+                "A. Áp suất của khối khí.",
+                "B. Động năng trung bình của các phân tử khí.",
+                "C. Khối lượng riêng của khối khí.",
+                "D. Nội năng của khối khí."
+            ],
+            correct: 2,
+            explain: "Bình kín có khối lượng khí m không đổi và thể tích V không đổi nên khối lượng riêng ρ = m/V không thay đổi."
+        },
+        {
+            q: "Câu 38. Theo thuyết động học phân tử, động năng trung bình của chuyển động nhiệt của các phân tử khí lý tưởng phụ thuộc trực tiếp vào đại lượng nào sau đây?",
+            options: [
+                "A. Khối lượng phân tử của chất khí.",
+                "B. Áp suất của chất khí.",
+                "C. Thể tích bình chứa.",
+                "D. Nhiệt độ tuyệt đối của chất khí."
+            ],
+            correct: 3,
+            explain: "Động năng tịnh tiến trung bình của phân tử Wđ = (3/2)kT tỉ lệ thuận trực tiếp với nhiệt độ tuyệt đối T."
+        },
+        {
+            q: "Câu 39. Hiện tượng nào sau đây không thể giải thích trực tiếp bằng thuyết động học phân tử khí?",
+            options: [
+                "A. Áp suất khí tăng khi bị nén ở nhiệt độ không đổi.",
+                "B. Quá trình khuếch tán của hai chất khí vào nhau.",
+                "C. Sự dãn nở vì nhiệt của thước đo bằng sắt.",
+                "D. Chuyển động Brown của các hạt bụi lơ lửng trong không khí."
+            ],
+            correct: 2,
+            explain: "Thước đo bằng sắt là vật rắn kết tinh (liên kết mạng tinh thể chặt chẽ), không thuộc đối tượng của thuyết động học phân tử chất khí."
+        },
+        {
+            q: "Câu 40. Trong quá trình giãn nở đẳng nhiệt của một khối khí lý tưởng,",
+            options: [
+                "A. Khối khí nhận nhiệt và toàn bộ nhiệt lượng đó chuyển thành công mà khí thực hiện.",
+                "B. Khối khí tỏa nhiệt và nội năng của khối khí tăng lên.",
+                "C. Khối khí không trao đổi nhiệt với bên ngoài (Q = 0).",
+                "D. Nội năng của khối khí giảm vì thể tích tăng."
+            ],
+            correct: 0,
+            explain: "Quá trình đẳng nhiệt khí lý tưởng có ΔT = 0 ⇒ ΔU = 0. Theo nguyên lý I: Q = ΔU + A = A > 0 (khí nhận nhiệt và chuyển hoàn toàn thành công giãn nở)."
+        },
+        {
+            q: "Câu 41. Ý nghĩa vật lý của Nhiệt độ theo Thuyết động học phân tử là",
+            options: [
+                "A. Thước đo động năng trung bình của chuyển động nhiệt tịnh tiến của phân tử.",
+                "B. Đại lượng đo tổng nhiệt lượng mà chất khí đang lưu giữ bên trong.",
+                "C. Thước đo mật độ phân tử khí có trong một đơn vị thể tích.",
+                "D. Đại lượng đặc trưng cho khả năng dẫn nhiệt của các phân tử khí."
+            ],
+            correct: 0,
+            explain: "Nhiệt độ tuyệt đối đặc trưng cho cường độ chuyển động nhiệt hỗn loạn của các phân tử, tỉ lệ thuận với động năng tịnh tiến trung bình của phân tử."
+        },
+        {
+            q: "Câu 42. Áp suất của chất khí tác dụng lên thành bình là",
+            options: [
+                "A. Tổng lực tác dụng trung bình của các phân tử khí va chạm vào một đơn vị diện tích thành bình.",
+                "B. Tổng lực đẩy tĩnh điện giữa các phân tử khí khi chúng đứng gần nhau.",
+                "C. Tổng trọng lực của toàn bộ các phân tử khí đè lên đáy bình chứa.",
+                "D. Tổng lực liên kết giữa các phân tử khí với các nguyên tử cấu tạo nên thành bình."
+            ],
+            correct: 0,
+            explain: "Áp suất p = F_tb / S chính là lực tác dụng trung bình của các phân tử khí lên một đơn vị diện tích thành bình."
+        },
+        {
+            q: "Câu 43. Nội dung cơ bản của Định luật phân bố đều năng lượng theo bậc tự do là gì?",
+            options: [
+                "A. Mỗi bậc tự do của phân tử sở hữu mức năng lượng động năng trung bình bằng (1/2)kT.",
+                "B. Tất cả các phân tử khí trong hệ đều chuyển động với cùng một mức năng lượng.",
+                "C. Năng lượng phân bố cho chuyển động quay luôn gấp đôi chuyển động tịnh tiến.",
+                "D. Phân tử có càng nhiều bậc tự do thì chuyển động với vận tốc càng lớn."
+            ],
+            correct: 0,
+            explain: "Định luật Boltzmann về sự phân bố đều động năng theo bậc tự do: ở trạng thái cân bằng nhiệt tại nhiệt độ T, mỗi bậc tự do của phân tử có động năng trung bình là (1/2)kT."
+        },
+        {
+            q: "Câu 44. Khi tăng nhiệt độ của một lượng khí lý tưởng trong bình kín, các phân tử khí sẽ chuyển động như thế nào?",
+            options: [
+                "A. Chuyển động nhanh hơn và va chạm vào thành bình mạnh hơn, làm tăng áp suất.",
+                "B. Chuyển động chậm lại và tập trung dần về phía đáy bình.",
+                "C. Chuyển động theo một hướng nhất định thay vì hỗn loạn.",
+                "D. Giữ nguyên vận tốc chuyển động nhưng nở to ra về kích thước."
+            ],
+            correct: 0,
+            explain: "Nhiệt độ tăng làm vận tốc chuyển động nhiệt của các phân tử tăng lên, gây va chạm mạnh và nhiều hơn lên thành bình."
+        },
+        {
+            q: "Câu 45. Phương trình trạng thái khí lý tưởng phản ánh mối liên hệ giữa các đại lượng nào của một lượng khí xác định?",
+            options: [
+                "A. Mối liên hệ đồng thời giữa áp suất, thể tích và nhiệt độ tuyệt đối của khối khí.",
+                "B. Mối liên hệ chỉ giữa áp suất và thể tích khi nhiệt độ giữ nguyên không đổi.",
+                "C. Mối liên hệ giữa khối lượng khí và vận tốc chuyển động của các phân tử.",
+                "D. Mối liên hệ giữa nhiệt lượng cung cấp và công mà chất khí thực hiện được."
+            ],
+            correct: 0,
+            explain: "Phương trình trạng thái pV/T = const liên hệ đồng thời 3 thông số trạng thái: áp suất p, thể tích V và nhiệt độ tuyệt đối T."
+        },
+        {
+            q: "Câu 46. Một lượng khí trong xilanh được cung cấp nhiệt và giãn nở để đẩy pittông. Theo nguyên lý I nhiệt động lực học, nhiệt lượng khí nhận được",
+            options: [
+                "A. Luôn chuyển hoàn toàn thành công do khí thực hiện.",
+                "B. Luôn làm nội năng của khí tăng đúng bằng nhiệt lượng nhận được.",
+                "C. Bằng tổng độ biến thiên nội năng và công do khí thực hiện.",
+                "D. Bằng công do khí thực hiện trừ độ biến thiên nội năng."
+            ],
+            correct: 2,
+            explain: "Theo nguyên lý I nhiệt động lực học: Q = ΔU + A (nhiệt lượng hệ nhận được dùng để làm tăng nội năng ΔU và thực hiện công A ra bên ngoài)."
+        },
+        {
+            q: "Câu 47. Một lượng khí lý tưởng giãn nở đẳng nhiệt và thực hiện công dương. Nhận xét nào đúng?",
+            options: [
+                "A. Khí phải nhận nhiệt để bù phần năng lượng truyền ra dưới dạng công.",
+                "B. Khí không trao đổi nhiệt vì nhiệt độ không thay đổi.",
+                "C. Nội năng của khí giảm vì khí thực hiện công.",
+                "D. Khí phải tỏa nhiệt vì thể tích của khí tăng."
+            ],
+            correct: 0,
+            explain: "Quá trình đẳng nhiệt ΔU = 0 nên Q = A > 0: khí phải nhận nhiệt từ môi trường để thực hiện công giãn nở."
+        },
+        {
+            q: "Câu 48. Một lượng khí bị nén trong một xilanh cách nhiệt, không trao đổi nhiệt với môi trường. Bỏ qua biến thiên động năng và thế năng của toàn bộ khối khí. Nội năng của khí",
+            options: [
+                "A. Không đổi vì khí không nhận nhiệt.",
+                "B. Giảm vì thể tích của khí giảm.",
+                "C. Luôn bằng không vì quá trình là đoạn nhiệt.",
+                "D. Tăng vì môi trường thực hiện công lên khí."
+            ],
+            correct: 3,
+            explain: "Quá trình đoạn nhiệt (Q = 0), môi trường nén khí (khí nhận công, tức A_khí < 0) nên ΔU = Q - A_khí = -A_khí > 0 (nội năng tăng)."
+        },
+        {
+            q: "Câu 49. Khi đặt hai vật có nhiệt độ khác nhau tiếp xúc nhiệt trong một hệ cách nhiệt với bên ngoài, nhiệt tự truyền từ vật nóng sang vật lạnh. Giải thích nào phù hợp với nguyên lý II nhiệt động lực học?",
+            options: [
+                "A. Năng lượng chỉ được bảo toàn khi nhiệt truyền từ nóng sang lạnh.",
+                "B. Quá trình tự diễn biến này làm tổng entropy của hệ tăng.",
+                "C. Nội năng của mỗi vật đều tăng trong quá trình truyền nhiệt.",
+                "D. Nhiệt không thể truyền từ lạnh sang nóng trong bất kỳ điều kiện nào."
+            ],
+            correct: 1,
+            explain: "Theo nguyên lý II nhiệt động lực học (nguyên lý tăng entropy), mọi quá trình tự nhiên không thuận nghịch trong hệ cô lập luôn diễn ra theo chiều làm tăng tổng entropy của hệ."
+        },
+        {
+            q: "Câu 50. Một động cơ nhiệt hoạt động theo chu trình, nhận nhiệt từ nguồn nóng và thải nhiệt vào nguồn lạnh. Vì sao động cơ không thể biến toàn bộ nhiệt nhận từ nguồn nóng thành công?",
+            options: [
+                "A. Vì nguyên lý I yêu cầu công do động cơ thực hiện luôn bằng không.",
+                "B. Vì nội năng của động cơ phải tăng sau mỗi chu trình.",
+                "C. Vì nguyên lý II không cho phép động cơ theo chu trình chỉ nhận nhiệt từ một nguồn và biến toàn bộ nhiệt đó thành công.",
+                "D. Vì nguồn lạnh phải cung cấp thêm nhiệt để động cơ thực hiện công."
+            ],
+            correct: 2,
+            explain: "Đây chính là phát biểu Kelvin-Planck của Nguyên lý II nhiệt động lực học: không thể chế tạo động cơ vĩnh cửu loại hai."
+        },
+        {
+            q: "Câu 51. Một lượng khí lý tưởng có thể tích 10 lít ở áp suất 2 atm. Khí được nén đẳng nhiệt đến thể tích 5 lít. Áp suất của khí sau khi nén bằng",
+            options: [
+                "A. 1 atm.",
+                "B. 2 atm.",
+                "C. 4 atm.",
+                "D. 8 atm."
+            ],
+            correct: 2,
+            explain: "Định luật Boyle-Mariotte: p₁V₁ = p₂V₂ ⇒ p₂ = p₁V₁ / V₂ = (2 · 10) / 5 = 4 atm."
+        },
+        {
+            q: "Câu 52. Một lượng khí lý tưởng được giữ ở thể tích không đổi. Nhiệt độ tuyệt đối của khí tăng từ 300 K lên 600 K. Nếu áp suất ban đầu là 1 atm thì áp suất cuối bằng",
+            options: [
+                "A. 0,5 atm.",
+                "B. 1 atm.",
+                "C. 2 atm.",
+                "D. 4 atm."
+            ],
+            correct: 2,
+            explain: "Quá trình đẳng tích: p₂ = p₁ · (T₂ / T₁) = 1 · (600 / 300) = 2 atm."
+        },
+        {
+            q: "Câu 53. Nhiệt độ tuyệt đối của một lượng khí lý tưởng tăng từ 300 K lên 1200 K. Tốc độ căn quân phương của các phân tử khí thay đổi như thế nào?",
+            options: [
+                "A. Tăng 2 lần.",
+                "B. Tăng 4 lần.",
+                "C. Giảm 2 lần.",
+                "D. Không thay đổi."
+            ],
+            correct: 0,
+            explain: "Tốc độ căn quân phương v_rms = √(3RT/M) tỉ lệ thuận với √T. Khi T tăng 4 lần (1200 / 300 = 4) thì v_rms tăng √4 = 2 lần."
+        },
+        {
+            q: "Câu 54. Hai bình có cùng thể tích chứa cùng một loại khí lý tưởng ở cùng nhiệt độ. Áp suất trong bình thứ nhất gấp đôi áp suất trong bình thứ hai. So với bình thứ hai, số phân tử khí trong bình thứ nhất",
+            options: [
+                "A. bằng một nửa.",
+                "B. bằng nhau.",
+                "C. gấp đôi.",
+                "D. gấp bốn lần."
+            ],
+            correct: 2,
+            explain: "Từ pV = NkT, khi V và T bằng nhau thì số phân tử N tỉ lệ thuận với áp suất p. Vì p₁ = 2p₂ nên N₁ = 2N₂."
+        },
+        {
+            q: "Câu 55. Một mol khí lý tưởng ở nhiệt độ 300 K. Lấy hằng số khí R = 8,31 J/(mol·K). Tích pV của lượng khí này xấp xỉ bằng",
+            options: [
+                "A. 831 J.",
+                "B. 1662 J.",
+                "C. 2493 J.",
+                "D. 4986 J."
+            ],
+            correct: 2,
+            explain: "pV = nRT = 1 · 8,31 · 300 = 2493 J."
+        },
+        {
+            q: "Câu 56. Đồ thị nào sau đây phù hợp với quá trình đẳng áp?<span class='img-wrapper'><img src='img1.png' alt='Đồ thị Câu 56'></span>",
+            options: [
+                "A. Hình A.",
+                "B. Hình B.",
+                "C. Hình C.",
+                "D. Hình D."
+            ],
+            correct: 3,
+            explain: "Trong hệ tọa độ (V, T), đường đẳng áp là đường thẳng có đường kéo dài đi qua gốc tọa độ O (V tỉ lệ thuận với nhiệt độ tuyệt đối T)."
+        },
+        {
+            q: "Câu 57. Trong quá trình đẳng áp, khối lượng riêng của khí và nhiệt độ tuyệt đối có công thức liên hệ",
+            options: [
+                "A. D₁ / D₂ = T₂ / T₁.",
+                "B. D₁ / D₂ = T₁ / T₂.",
+                "C. D₁ / T₁ = D₂ / T₁.",
+                "D. Cả A, B, C đều đúng."
+            ],
+            correct: 0,
+            explain: "Vì khối lượng khí không đổi (m = D₁V₁ = D₂V₂) nên D₁/D₂ = V₂/V₁. Trong quá trình đẳng áp V₂/V₁ = T₂/T₁ ⇒ D₁/D₂ = T₂/T₁."
+        },
+        {
+            q: "Câu 58. Tính chất nào sau đây không phải là của phân tử của vật chất ở thể khí?",
+            options: [
+                "A. chuyển động hỗn loạn.",
+                "B. chuyển động không ngừng.",
+                "C. chuyển động hỗn loạn và không ngừng.",
+                "D. chuyển động hỗn loạn xung quanh vị trí cân bằng cố định."
+            ],
+            correct: 3,
+            explain: "Chuyển động dao động xung quanh vị trí cân bằng cố định là tính chất của phân tử vật rắn, không phải chất khí."
+        },
+        {
+            q: "Câu 59. Khi nói về khí lý tưởng, phát biểu nào sau đây là không đúng?",
+            options: [
+                "A. Là khí mà thể tích của các phân tử khí có thể bỏ qua.",
+                "B. Khi va chạm vào thành bình gây nên áp suất.",
+                "C. Là khí mà các phân tử khí chỉ tương tác với nhau khi va chạm.",
+                "D. Là khí mà khối lượng của các phân tử khí có thể bỏ qua."
+            ],
+            correct: 3,
+            explain: "Khí lý tưởng bỏ qua kích thước (thể tích riêng) của phân tử nhưng không bỏ qua khối lượng phân tử."
+        },
+        {
+            q: "Câu 60. Quá trình nào sau đây là đẳng quá trình?",
+            options: [
+                "A. Đun nóng khí trong một bình đậy kín.",
+                "B. Không khí trong quả bóng bay bị phơi nắng, nóng lên, nở ra làm căng bóng.",
+                "C. Đun nóng khí trong một xilanh, khí nở ra đẩy pit-tông chuyển động.",
+                "D. Cả ba quá trình trên đều không phải là đẳng quá trình."
+            ],
+            correct: 0,
+            explain: "Đun nóng khí trong bình đậy kín có thể tích V không đổi nên là quá trình đẳng tích (một đẳng quá trình)."
+        },
+        {
+            q: "Câu 61. Đặt một bình kín cứng chứa khí lí tưởng dưới ánh nắng gắt. Khi nhiệt độ không khí tăng, áp suất trong bình tăng vì",
+            options: [
+                "A. Số phân tử khí tăng.",
+                "B. Khối lượng từng phân tử tăng.",
+                "C. Các phân tử chuyển động nhanh hơn và va chạm với thành bình mạnh hơn.",
+                "D. Thể tích bình tăng."
+            ],
+            correct: 2,
+            explain: "Nhiệt độ tăng làm động năng và tốc độ các phân tử tăng, dẫn đến va chạm mạnh và nhiều hơn lên thành bình."
+        },
+        {
+            q: "Câu 62. Một quả bóng thời tiết mềm được thả từ mặt đất và bay lên độ cao khoảng 300 m. Giả sử nhiệt độ của khí bên trong bóng thay đổi không đáng kể. Khi lên cao, áp suất khí quyển bên ngoài giảm. Quả bóng có xu hướng",
+            options: [
+                "A. Co lại vì áp suất bên ngoài giảm.",
+                "B. Nở ra vì áp suất bên ngoài giảm.",
+                "C. Giữ nguyên thể tích vì lượng khí bên trong không đổi.",
+                "D. Co lại vì nhiệt độ luôn giảm theo độ cao."
+            ],
+            correct: 1,
+            explain: "Nhiệt độ thay đổi không đáng kể (đẳng nhiệt), khi lên cao áp suất giảm thì thể tích khí trong bóng tăng (bóng nở ra)."
+        },
+        {
+            q: "Câu 63. Một chai nhựa rỗng được đậy kín khi còn ấm rồi để nguội. Sau một thời gian chai có thể bị móp vào trong vì",
+            options: [
+                "A. Áp suất khí bên trong giảm khi nhiệt độ giảm.",
+                "B. Khối lượng chai giảm.",
+                "C. Áp suất khí bên trong tăng mạnh.",
+                "D. Số phân tử khí bên trong tăng."
+            ],
+            correct: 0,
+            explain: "Khi nguội đi, nhiệt độ khí trong chai giảm làm áp suất bên trong giảm thấp hơn áp suất khí quyển bên ngoài, khiến áp suất khí quyển ép vỏ chai móp vào."
+        },
+        {
+            q: "Câu 64. Áp suất của lốp ô tô thường tăng sau khi xe chạy một quãng đường dài. Nguyên nhân chính gây tăng áp suất của lốp xe là",
+            options: [
+                "A. Số mol khí trong lốp tăng.",
+                "B. Nhiệt độ khí trong lốp tăng.",
+                "C. Thể tích lốp giảm mạnh.",
+                "D. Khối lượng không khí trong lốp tăng."
+            ],
+            correct: 1,
+            explain: "Ma sát với mặt đường và biến dạng lốp sinh nhiệt làm nhiệt độ không khí trong lốp tăng; do thể tích lốp thay đổi rất ít nên áp suất khí tăng."
+        },
+        {
+            q: "Câu 65. Một bình khí H₂ được nén áp suất cao được mở van cho khí thoát ra nhanh. Sau một thời gian mở van, thân bình thường có xu hướng lạnh đi vì",
+            options: [
+                "A. Khí giãn nở và nhiệt độ giảm.",
+                "B. Khí bị nén thêm.",
+                "C. Thể tích bình tăng.",
+                "D. Số mol khí tăng."
+            ],
+            correct: 0,
+            explain: "Khí thoát ra nhanh thực hiện quá trình giãn nở gần như đoạn nhiệt, tiêu hao nội năng để sinh công đẩy khí ra ngoài nên nhiệt độ khí giảm mạnh."
+        },
+        {
+            q: "Câu 66. Khi một khối khí lý tưởng được làm lạnh ở thể tích không đổi cho đến khi áp suất giảm còn một nửa so với ban đầu, thì động năng tịnh tiến trung bình của các phân tử khí sẽ",
+            options: [
+                "A. Không thay đổi.",
+                "B. Giảm còn một nửa so với ban đầu.",
+                "C. Tăng gấp đôi so với ban đầu.",
+                "D. Tăng gấp ba so với ban đầu."
+            ],
+            correct: 1,
+            explain: "Trong quá trình đẳng tích, T tỉ lệ thuận với p. Khi p giảm một nửa thì T giảm một nửa, dẫn đến động năng tịnh tiến trung bình Wđ = (3/2)kT giảm còn một nửa."
+        },
+        {
+            q: "Câu 67. Một quả bóng bay được đưa từ trong phòng lạnh ra ngoài trời nóng. Giả sử lượng khí trong bóng không đổi và áp suất bên trong luôn gần bằng áp suất khí quyển. Phát biểu nào sau đây phù hợp nhất với phương trình trạng thái khí lý tưởng?",
+            options: [
+                "A. Nhiệt độ tăng làm thể tích bóng giảm.",
+                "B. Nhiệt độ tăng làm thể tích bóng tăng.",
+                "C. Nhiệt độ tăng nhưng thể tích bóng không thay đổi vì lượng khí không đổi.",
+                "D. Nhiệt độ tăng làm số mol khí trong bóng tăng."
+            ],
+            correct: 1,
+            explain: "Quá trình đẳng áp (p = const) với số mol n không đổi: V = (nR/p)T, do đó nhiệt độ T tăng làm thể tích V tăng."
+        },
+        {
+            q: "Câu 68. Nội năng của một hệ khí lý tưởng trong quá trình đẳng nhiệt",
+            options: [
+                "A. Giảm.",
+                "B. Tăng.",
+                "C. Bằng không.",
+                "D. Không đổi."
+            ],
+            correct: 3,
+            explain: "Nội năng khí lý tưởng U = (i/2)nRT chỉ phụ thuộc nhiệt độ T. Trong quá trình đẳng nhiệt T = const nên nội năng không đổi."
+        },
+        {
+            q: "Câu 69. Trong quá trình giãn nở đẳng nhiệt của một khí lý tưởng, thì",
+            options: [
+                "A. Nội năng giảm.",
+                "B. Không có sự trao đổi nhiệt.",
+                "C. Nhiệt độ không đổi, do đó nội năng không đổi, nên nhiệt lượng cung cấp bằng công thực hiện.",
+                "D. Công thực hiện bằng không."
+            ],
+            correct: 2,
+            explain: "Vì ΔT = 0 ⇒ ΔU = 0. Theo nguyên lý I nhiệt động lực học: Q = ΔU + A = A."
+        },
+        {
+            q: "Câu 70. Sự thay đổi nội năng của khí lý tưởng phụ thuộc vào yếu tố nào?",
+            options: [
+                "A. Sự thay đổi thể tích.",
+                "B. Sự thay đổi nhiệt độ và thể tích.",
+                "C. Sự thay đổi nhiệt độ.",
+                "D. Đường đi được tuân theo để làm thay đổi nội năng."
+            ],
+            correct: 2,
+            explain: "Độ biến thiên nội năng của khí lý tưởng ΔU = (i/2)nRΔT chỉ phụ thuộc vào sự thay đổi nhiệt độ ΔT."
+        },
+        {
+            q: "Câu 71. Khí lý tưởng được mô hình hóa là chất khí mà các phân tử",
+            options: [
+                "A. Có kích thước lớn và tương tác mạnh với nhau.",
+                "B. Có kích thước rất nhỏ và không tương tác với nhau ngoài va chạm đàn hồi.",
+                "C. Luôn đứng yên trong bình chứa.",
+                "D. Chỉ chịu tác dụng của trọng lực."
+            ],
+            correct: 1,
+            explain: "Định nghĩa cơ bản của mô hình khí lý tưởng."
+        },
+        {
+            q: "Câu 72. Trong mô hình khí lý tưởng, nguyên nhân gây ra áp suất của khí tác dụng lên thành bình?",
+            options: [
+                "A. Do trọng lượng của các phân tử khí.",
+                "B. Do lực hút giữa các phân tử khí.",
+                "C. Do các phân tử va chạm liên tục vào thành bình.",
+                "D. Do thể tích của các phân tử tăng lên."
+            ],
+            correct: 2,
+            explain: "Va chạm liên tục của các phân tử khí lên thành bình gây ra áp suất."
+        },
+        {
+            q: "Câu 73. Một bình kín chứa khí lý tưởng được đun nóng. Đại lượng nào chắc chắn không thay đổi?",
+            options: [
+                "A. Áp suất.",
+                "B. Nhiệt độ.",
+                "C. Số mol khí.",
+                "D. Thể tích riêng."
+            ],
+            correct: 2,
+            explain: "Bình kín không cho khí thoát ra hay lọt vào nên lượng chất (số mol khí n) không thay đổi."
+        },
+        {
+            q: "Câu 74. Nếu tất cả các phân tử khí trong một bình kín chuyển động nhanh hơn trước thì đại lượng nào tăng đầu tiên?",
+            options: [
+                "A. Áp suất khí.",
+                "B. Khối lượng khí.",
+                "C. Số mol khí.",
+                "D. Khối lượng mol."
+            ],
+            correct: 0,
+            explain: "Vận tốc phân tử tăng làm động năng và áp suất khí lên thành bình tăng lên."
+        },
+        {
+            q: "Câu 75. Một túi snack được đóng gói ở đồng bằng. Khi mang lên vùng núi cao, túi thường phồng lên vì",
+            options: [
+                "A. Khối lượng không khí trong túi tăng.",
+                "B. Nhiệt độ trong túi luôn tăng.",
+                "C. Áp suất khí quyển bên ngoài giảm.",
+                "D. Túi tự sinh ra thêm khí."
+            ],
+            correct: 2,
+            explain: "Càng lên cao áp suất khí quyển bên ngoài càng giảm; khí trong túi kín có áp suất lớn hơn bên ngoài nên đẩy vỏ túi phồng căng lên."
+        },
+        {
+            q: "Câu 76. Phương trình trạng thái của khí lý tưởng có dạng",
+            options: [
+                "A. pV = nRT.",
+                "B. p/V = nRT.",
+                "C. pT = nRV.",
+                "D. V/p = nRT."
+            ],
+            correct: 0,
+            explain: "Phương trình Clapeyron-Mendeleev cho n mol khí lý tưởng: pV = nRT."
+        },
+        {
+            q: "Câu 77. Trong phương trình pV = nRT, đại lượng n biểu thị",
+            options: [
+                "A. Số phân tử khí.",
+                "B. Số mol khí.",
+                "C. Mật độ phân tử.",
+                "D. Khối lượng riêng của khí."
+            ],
+            correct: 1,
+            explain: "Trong phương trình pV = nRT, n là số mol khí (n = m / M)."
+        },
+        {
+            q: "Câu 78. Đối với một lượng khí lý tưởng xác định, nếu nhiệt độ không đổi thì",
+            options: [
+                "A. pV = const.",
+                "B. p/V = const.",
+                "C. p + V = const.",
+                "D. p - V = const."
+            ],
+            correct: 0,
+            explain: "Theo định luật Boyle-Mariotte (T = const): tích áp suất và thể tích pV = hằng số."
+        },
+        {
+            q: "Câu 79. Trong một quá trình đẳng tích của khí lý tưởng, khi nhiệt độ tuyệt đối tăng thì",
+            options: [
+                "A. Áp suất giảm.",
+                "B. Áp suất không đổi.",
+                "C. Áp suất tăng tỉ lệ với nhiệt độ tuyệt đối.",
+                "D. Thể tích tăng."
+            ],
+            correct: 2,
+            explain: "Theo định luật Charles (quá trình đẳng tích V = const): p/T = const, áp suất tăng tỉ lệ thuận với nhiệt độ tuyệt đối T."
+        },
+        {
+            q: "Câu 80. Nhiệt độ xuất hiện trong phương trình trạng thái khí lý tưởng phải được tính theo",
+            options: [
+                "A. Độ Celsius.",
+                "B. Độ Fahrenheit.",
+                "C. Kelvin.",
+                "D. Bất kỳ thang nhiệt độ nào."
+            ],
+            correct: 2,
+            explain: "T trong phương trình pV = nRT là nhiệt độ tuyệt đối, tính theo đơn vị Kelvin (K), với T(K) = t(°C) + 273,15."
+        },
+        {
+            q: "Câu 81. Nguyên nhân cơ bản gây ra áp suất của chất khí là",
+            options: [
+                "A. chất khí thường được đựng trong bình kín.",
+                "B. chất khí thường có thể tích lớn.",
+                "C. các phân tử khí va chạm với nhau và va chạm vào thành bình.",
+                "D. chất khí thường có khối lượng riêng nhỏ."
+            ],
+            correct: 2,
+            explain: "Chuyển động nhiệt hỗn loạn và sự va chạm của các phân tử lên thành bình gây ra áp suất chất khí."
+        },
+        {
+            q: "Câu 82. Nhận xét nào sau đây về các phân tử khí lí tưởng là không đúng?",
+            options: [
+                "A. Có thể tích riêng không đáng kể.",
+                "B. Có lực tương tác không đáng kể khi không va chạm.",
+                "C. Có khối lượng không đáng kể.",
+                "D. Có vận tốc càng lớn khi nhiệt độ phân tử càng cao."
+            ],
+            correct: 2,
+            explain: "Các phân tử khí lý tưởng vẫn có khối lượng xác định (không bỏ qua khối lượng)."
+        },
+        {
+            q: "Câu 83. Chọn câu trả lời đúng: Một kmol khí lý tưởng ở điều kiện tiêu chuẩn chiếm thể tích",
+            options: [
+                "A. 22,4 lít.",
+                "B. 22,4 m³.",
+                "C. 22,4 cm³.",
+                "D. 22,4 mm³."
+            ],
+            correct: 1,
+            explain: "1 mol khí ở đktc chiếm 22,4 lít = 0,0224 m³. Vậy 1 kmol (= 1000 mol) chiếm thể tích 22,4 × 1000 lít = 22.400 lít = 22,4 m³."
+        },
+        {
+            q: "Câu 84. Quá trình nào sau đây có liên quan tới định luật Charles (quá trình biến đổi đẳng áp)?",
+            options: [
+                "A. Quả bóng bàn bị bẹp nhúng vào nước nóng, phồng lên như cũ.",
+                "B. Thổi không khí vào một quả bóng bay.",
+                "C. Đun nóng khí trong một bình kín.",
+                "D. Đun nóng khí trong một xilanh hở."
+            ],
+            correct: 3,
+            explain: "Đun nóng khí trong xilanh hở (pít-tông di chuyển tự do không ma sát) giữ cho áp suất khí luôn bằng áp suất khí quyển bên ngoài (quá trình đẳng áp)."
+        },
+        {
+            q: "Câu 85. Đồ thị hình bên biểu diễn một khối khí thay đổi trạng thái của 2 quá trình (1) → (2) → (3). Mô tả nào sau đây là đúng?<span class='img-wrapper'><img src='img2.png' alt='Đồ thị Câu 85'></span>",
+            options: [
+                "A. Nung nóng đẳng tích sau đó giãn đẳng áp.",
+                "B. Nung nóng đẳng tích sau đó nén đẳng áp.",
+                "C. Nung nóng đẳng áp sau đó giãn đẳng nhiệt.",
+                "D. Nung nóng đẳng áp sau đó nén đẳng nhiệt."
+            ],
+            correct: 1,
+            explain: "Trên đồ thị (P, T): đoạn (1)→(2) là đường thẳng hướng qua gốc O với T tăng nên là nung nóng đẳng tích; đoạn (2)→(3) nằm ngang với P không đổi và T giảm (kéo theo V giảm) nên là nén đẳng áp."
+        },
+        {
+            q: "Câu 86. Phương trình trạng thái của một lượng khí lý tưởng được viết dưới dạng với p là áp suất, V là thể tích, T là nhiệt độ, n là số mol",
+            options: [
+                "A. pV = nRT.",
+                "B. pV = RT / n.",
+                "C. pT = nRV.",
+                "D. p + V = nRT."
+            ],
+            correct: 0,
+            explain: "Phương trình trạng thái khí lý tưởng: pV = nRT."
+        },
+        {
+            q: "Câu 87. Trong phương trình pV = nRT, đại lượng R là",
+            options: [
+                "A. khối lượng riêng của khí.",
+                "B. hằng số khí.",
+                "C. nhiệt dung riêng của khí.",
+                "D. hằng số Boltzmann."
+            ],
+            correct: 1,
+            explain: "R ≈ 8,314 J/(mol·K) được gọi là hằng số khí lý tưởng (hằng số phổ biến của chất khí)."
+        },
+        {
+            q: "Câu 88. Một lượng khí lý tưởng được giữ ở nhiệt độ không đổi. Nếu thể tích của khí tăng gấp đôi thì áp suất của khí",
+            options: [
+                "A. tăng gấp đôi.",
+                "B. giảm một nửa.",
+                "C. không đổi.",
+                "D. tăng gấp bốn lần."
+            ],
+            correct: 1,
+            explain: "Định luật Boyle-Mariotte (T = const): p tỉ lệ nghịch với V, nên khi V tăng gấp đôi thì áp suất p giảm một nửa."
+        },
+        {
+            q: "Câu 89. Trong quá trình đẳng tích của một lượng khí lý tưởng, nếu nhiệt độ tuyệt đối tăng gấp đôi thì áp suất của khí",
+            options: [
+                "A. giảm một nửa.",
+                "B. không đổi.",
+                "C. tăng gấp đôi.",
+                "D. tăng gấp bốn lần."
+            ],
+            correct: 2,
+            explain: "Trong quá trình đẳng tích, áp suất tỉ lệ thuận với nhiệt độ tuyệt đối T, nên T tăng gấp đôi thì p tăng gấp đôi."
+        },
+        {
+            q: "Câu 90. Một mol khí lý tưởng ở nhiệt độ T = 300 K, áp suất p = 1,0 × 10⁵ Pa. Thể tích của khí xấp xỉ bằng bao nhiêu? Cho R = 8,31 J/(mol·K).",
+            options: [
+                "A. 0,00249 m³.",
+                "B. 0,0249 m³.",
+                "C. 0,249 m³.",
+                "D. 2,49 m³."
+            ],
+            correct: 1,
+            explain: "V = nRT / p = (1 · 8,31 · 300) / (1,0 × 10⁵) = 2493 / 100000 = 0,02493 m³ ≈ 0,0249 m³."
+        }
+    ];
+
+    let currentQuestion = 0;
+    let score = 0;
+    let answered = false;
+
+    const questionCounter = document.getElementById("question-counter");
+    const scoreTracker = document.getElementById("score-tracker");
+    const questionText = document.getElementById("question-text");
+    const optionsContainer = document.getElementById("options-container");
+    const explanationBox = document.getElementById("explanation-box");
+    const explanationText = document.getElementById("explanation-text");
+    const prevBtn = document.getElementById("prev-btn");
+    const nextBtn = document.getElementById("next-btn");
+    const quizScreen = document.getElementById("quiz-screen");
+    const scoreCard = document.getElementById("score-card");
+    const finalScore = document.getElementById("final-score");
+    const jumpInput = document.getElementById("jump-input");
+
+    function loadQuestion() {
+        answered = false;
+        explanationBox.style.display = "none";
+        nextBtn.disabled = true;
+        prevBtn.disabled = currentQuestion === 0;
+
+        const q = quizData[currentQuestion];
+        questionCounter.innerText = `Câu ${currentQuestion + 1} / ${quizData.length}`;
+        scoreTracker.innerText = `Điểm: ${score}`;
+        questionText.innerHTML = q.q;
+        jumpInput.value = currentQuestion + 1;
+
+        optionsContainer.innerHTML = "";
+        q.options.forEach((opt, index) => {
+            const li = document.createElement("li");
+            li.className = "option-item";
+            li.innerText = opt;
+            li.onclick = () => selectOption(index, li);
+            optionsContainer.appendChild(li);
+        });
+    }
+
+    function selectOption(selectedIndex, element) {
+        if (answered) return;
+        answered = true;
+
+        const q = quizData[currentQuestion];
+        const options = optionsContainer.children;
+
+        if (selectedIndex === q.correct) {
+            element.classList.add("correct");
+            score++;
+        } else {
+            element.classList.add("incorrect");
+            options[q.correct].classList.add("correct");
+        }
+
+        for (let opt of options) {
+            opt.classList.add("disabled");
+        }
+
+        scoreTracker.innerText = `Điểm: ${score}`;
+        explanationText.innerText = q.explain;
+        explanationBox.style.display = "block";
+        nextBtn.disabled = false;
+    }
+
+    function nextQuestion() {
+        currentQuestion++;
+        if (currentQuestion < quizData.length) {
+            loadQuestion();
+        } else {
+            showScore();
+        }
+    }
+
+    function prevQuestion() {
+        if (currentQuestion > 0) {
+            currentQuestion--;
+            loadQuestion();
+        }
+    }
+
+    function jumpToQuestion() {
+        const val = parseInt(jumpInput.value);
+        if (val >= 1 && val <= quizData.length) {
+            currentQuestion = val - 1;
+            loadQuestion();
+        }
+    }
+
+    function showScore() {
+        quizScreen.style.display = "none";
+        scoreCard.style.display = "block";
+        finalScore.innerText = `Bạn đã trả lời đúng ${score} / ${quizData.length} câu. (Đạt ${(score/quizData.length*10).toFixed(1)} điểm)`;
+    }
+
+    function restartQuiz() {
+        currentQuestion = 0;
+        score = 0;
+        quizScreen.style.display = "block";
+        scoreCard.style.display = "none";
+        loadQuestion();
+    }
+
+    loadQuestion();
+</script>
+
+</body>
+</html>
